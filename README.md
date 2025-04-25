@@ -1,6 +1,6 @@
 Dataset Backgraoud
 
-- This is a Capstone Project.
+- This is a Emory Epi Capstone Project.
 - The Takunda and Titukulane programs are two USAID-funded resilience initiatives in Zimbabwe and Malawi.
 - The two programs aim to achieve sustainable, equitable, and resilient food, nutrition, and food security through integrated interventions.
 - The overall research question of our team is: “Does participation in nutrition-focused interventions in the Takunda and Titukulane programs produce meaningful changes in food security outcomes?”
