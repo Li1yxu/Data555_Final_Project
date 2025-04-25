@@ -1,0 +1,147 @@
+---
+title: "Data 555 Interactive Widgets"
+author: "Ying Xu"
+date: '`r Sys.Date()`'
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+---
+
+```{r}
+# load package
+pacman::p_load(here,readxl,haven,tidyverse,dplyr,gtsummary,ggplot2,plotly,DT)
+# here-i-am
+here::i_am("final_project.rmd") 
+```
+
+```{r cleaning}
+# Import data
+TKD_PaBS_2024 <- read_excel(here("raw_data", "Takunda PaBS Data 2024.xlsx"))
+TTK_PaBS_2024 <- read_sav(here("raw_data", "data2024version1.sav"))
+
+# TKD cleaning
+TKD <- TKD_PaBS_2024 %>%
+  mutate(hand_wash_location = 
+           if_else(E16ADoyouhaveahandwashingstationatyourhomestead == "Yes", 1, 0)) %>%
+  mutate(ICFY_diet_total = 
+      if_else(A3RootsamptubersWhitepotatoeswhiteyamscassavapl_A == "Yes", 1, 0) +     #root
+      if_else(A9Eggschickenturkeyfowlduck_A == "Yes", 1, 0) +                         #eggs
+      if_else(A11LegumesnutsampseedsAnyfoodsmadefrombeanspeas == "Yes", 1, 0) +       #legumes nuts
+      if_else(A1Isyourchildstillbreastfeeding == "Yes", 1, 0)) %>%                    #breast milk
+  select(
+    #demographics
+    X02District, Z02Sexofrespondent, Z03Ageofrespondent, 
+    Z04GenderedHouseholdType, Z05M2Male1529, Z05M3Male30, 
+    Z05F2Female1529, Z05F3Female30,
+    #exposure
+    Z06TakundainterventionsparticipatedinWASH,
+    #outcome
+    hand_wash_location, ICFY_diet_total) %>%
+  rename(District = X02District,
+        Sex = Z02Sexofrespondent,
+        Age = Z03Ageofrespondent,
+        Gendered_HH_Type = Z04GenderedHouseholdType,
+        Men_15_29 = Z05M2Male1529,
+        Men_30 = Z05M3Male30,
+        Female_15_29 = Z05F2Female1529,
+        Female_30 = Z05F3Female30,
+        Participate_WASH = Z06TakundainterventionsparticipatedinWASH) %>%
+  mutate(Country = "Zimbabwe") %>%
+  mutate(Sex = as.character(Sex)) %>%
+  mutate(Participate_WASH = as.character(Participate_WASH))
+
+TKD$Participate_WASH <- factor(TKD$Participate_WASH, levels = c(1, 0), 
+                  labels = c("Yes", "No"))
+
+# TTK cleaning
+TTK <- TTK_PaBS_2024 %>%
+  mutate(hand_wash_location = if_else(f06a %in% c(1, 2), 1, 0)) %>%
+  mutate(ICFY_diet_total = f02b37 + 
+           f02b32 + #root
+           f02b35 + #eggs
+           f02b33 + #legumes nuts
+           f02b31   #breast milk
+         ) %>%
+  select(
+    #demographics
+    c02, c03, c04, c14, c15, c12, c13,
+    #exposure
+    c05.9,
+    #outcome
+    hand_wash_location, ICFY_diet_total
+    ) %>%
+  rename(Sex = c02,
+        Age = c03,
+        Gendered_HH_Type = c04,
+        Men_15_29 = c14,
+        Men_30 = c15,
+        Female_15_29 = c12,
+        Female_30 = c13,
+        Participate_WASH = c05.9) %>%
+  mutate(Country = "Malawi") %>%
+  mutate(Sex = as.character(Sex)) %>%
+  mutate(Participate_WASH = as.character(Participate_WASH))
+
+
+TTK$Gendered_HH_Type <- factor(TTK$Gendered_HH_Type, levels = c(1, 2, 3, 4, 5),
+                 labels = c("Adult Male no Adult Female (MnF)",
+                            "Adult Female no Adult Male (FnM)",
+                            "Adult Male and Adult Female (M&F)",
+                            "Female Child no Adults (CNAF)",
+                            "Male Child no Adults (CNAM)"))
+TTK$Sex <- factor(TTK$Sex, levels = c(1, 2), 
+                  labels = c("Male", "Female"))
+TTK$Participate_WASH <- factor(TTK$Participate_WASH, levels = c(1, 2), 
+                  labels = c("Yes", "No"))
+
+# Combine dataset
+combined <- bind_rows(TKD, TTK)
+combined2 <- combined %>%
+  filter(!is.na(ICFY_diet_total))
+```
+
+# Interactive Boxplot
+
+## Row {data-height="400"}
+
+### Dietary Diversity by WASH Participation
+
+KEY TAKE AWAYs: This section provides an analysis of ICFY, which is a measure of children dietary diversity scores in relation to participation in WASH programs. The larger the number the more diverse the dietary is. The hover tooltip provides interpretative summary statistics such as the median and interquartile range, allowing users to quickly assess differences between the groups. The interactive boxplot below illustrates the distribution of dietary diversity scores among different WASH participation groups.
+
+```{r}
+plot_ly(data = combined,
+        x = ~Participate_WASH,
+        y = ~ICFY_diet_total,
+        type = 'box',
+        boxpoints = FALSE,  # do not show individual data points
+        hovertemplate = paste(
+          "<b>WASH Participation:</b> %{x}<br>",
+          "<b>Median ICFY Dietary Diversity:</b> %{median:.2f}<br>",
+          "<b>Q1 (25th Percentile):</b> %{q1:.2f}<br>",
+          "<b>Q3 (75th Percentile):</b> %{q3:.2f}<extra></extra>"
+        )) %>%
+  layout(xaxis = list(title = "WASH Program Participation", titlefont = list(size = 16)),
+         yaxis = list(title = "ICFY Dietary Diversity (unit)", titlefont = list(size = 16)),
+         width = 1100,
+         height = 500)
+```
+
+# Data Table
+
+## Row {data-height=400}
+
+### Participant Data
+
+KEY TAKE AWAYs: This section offers interactive features that enhance data exploration and analysis. Users can efficiently locate specific entries using the search bar, sort columns in ascending or descending order by clicking on the column headers, and adjust the number of displayed rows per page. These functions facilitate a tailored and efficient examination of the dataset.
+
+```{r}
+# Interactive Data Table with Filtering and Sorting
+datatable(combined2, options = list(
+  pageLength = 10,
+  autoWidth = TRUE,
+  searchHighlight = TRUE,
+  dom = 'Bfrtip',
+  buttons = c('copy', 'csv', 'excel', 'pdf', 'print')
+))
+```
+
