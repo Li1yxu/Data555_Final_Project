@@ -100,6 +100,19 @@ combined2 <- combined %>%
   filter(!is.na(ICFY_diet_total))
 ```
 
+# Introduction
+
+## Row {data-height="400"}
+
+### Data Source
+
+This is a Capstone Project, the data is retrieved from the Takunda and Titukulane programs, two USAID-funded resilience initiatives in Zimbabwe and Malawi, respectively, aim to achieve sustainable, equitable, and resilient food, nutrition, and income security through integrated interventions, including maternal and caregiver participation in Care Groups, farming schools, and income generating activities (IGAs). The data is collected from households who were sampled through intervention areas in Takunda and Titukulane that participated in the FY24 PaBS surveys.
+
+### Dashboard Impact
+
+This dashboard provides critical insights into the effectiveness of WASH interventions on children's dietary diversity, informing policymakers and stakeholders in public health. By clearly visualizing the link between WASH practices and dietary diversity, this dashboard helps program implementers identify gaps and areas for improvement. Its findings support evidence-based decisions, enhancing the impact of public health interventions.
+
+
 # Interactive Boxplot
 
 ## Row {data-height="400"}
@@ -128,7 +141,7 @@ plot_ly(data = combined,
 
 # Data Table
 
-## Row {data-height=400}
+## Row {data-height="400"}
 
 ### Participant Data
 
@@ -145,3 +158,8 @@ datatable(combined2, options = list(
 ))
 ```
 
+# Link to Github Repository
+
+## Row {data-height="400"}
+
+<https://github.com/Li1yxu/Data555_Final_Project>
