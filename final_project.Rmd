@@ -119,7 +119,13 @@ This dashboard provides critical insights into the effectiveness of WASH interve
 
 ### Dietary Diversity by WASH Participation
 
-KEY TAKE AWAYs: This section provides an analysis of ICFY, which is a measure of children dietary diversity scores in relation to participation in WASH programs. The larger the number the more diverse the dietary is. The hover tooltip provides interpretative summary statistics such as the median and interquartile range, allowing users to quickly assess differences between the groups. The interactive boxplot below illustrates the distribution of dietary diversity scores among different WASH participation groups.
+This section provides an analysis of ICFY, which is a measure of children dietary diversity scores in relation to participation in WASH programs. The larger the number the more diverse the dietary is. The hover tooltip provides interpretative summary statistics such as the median and interquartile range, allowing users to quickly assess differences between the groups. The interactive boxplot below illustrates the distribution of dietary diversity scores among different WASH participation groups.
+
+KEY TAKE AWAYs: 
+
+- Initial results suggest that participation in WASH interventions strongly correlates with improved dietary diversity scores among children.
+
+- Effective interventions to enhance dietary diversity likely require integrated approaches beyond WASH alone.
 
 ```{r}
 plot_ly(data = combined,
@@ -136,8 +142,10 @@ plot_ly(data = combined,
   layout(xaxis = list(title = "WASH Program Participation", titlefont = list(size = 16)),
          yaxis = list(title = "ICFY Dietary Diversity (unit)", titlefont = list(size = 16)),
          width = 1100,
-         height = 500)
+         height = 400)
 ```
+
+
 
 # Data Table
 
@@ -145,7 +153,13 @@ plot_ly(data = combined,
 
 ### Participant Data
 
-KEY TAKE AWAYs: This section offers interactive features that enhance data exploration and analysis. Users can efficiently locate specific entries using the search bar, sort columns in ascending or descending order by clicking on the column headers, and adjust the number of displayed rows per page. These functions facilitate a tailored and efficient examination of the dataset.
+This section offers interactive features that enhance data exploration and analysis. Users can efficiently locate specific entries using the search bar, sort columns in ascending or descending order by clicking on the column headers, and adjust the number of displayed rows per page. These functions facilitate a tailored and efficient examination of the dataset.
+
+KEY TAKE AWAYs: 
+
+- Interactive search, sorting, and pagination functionalities allow users to easily navigate and analyze detailed data entries.
+
+- These interactive tools enhance user experience by enabling quick, tailored exploration of the dataset, supporting informed decision-making and analysis.
 
 ```{r}
 # Interactive Data Table with Filtering and Sorting
